@@ -149,7 +149,7 @@ def main() -> None:
     )
     parser.add_argument("--dataset-version", type=int, default=2, choices=[1, 2])
     parser.add_argument("--concurrency", type=int, default=4)
-    parser.add_argument("--local", action="store_true", help="run without reporting to TraceRoot")
+    parser.add_argument("--local", action="store_true", help="run without reporting to traceroot")
     args = parser.parse_args()
 
     agent, candidate = load_agent(args.ref)

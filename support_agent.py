@@ -1,5 +1,5 @@
 """
-Acme Outfitters support agent, instrumented with TraceRoot.
+Acme Outfitters support agent, instrumented with traceroot.
 
 A router model reads each customer message and sends it to one of three
 sub-agents. Each sub-agent runs an OpenAI tool loop. When the model asks

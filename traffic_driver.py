@@ -1,5 +1,5 @@
 """
-Traffic driver for the TraceRoot demo project.
+Traffic driver for the traceroot demo project.
 
 Plays synthetic customers who talk to the support agent. Each session is
 one customer conversation with one or more turns, so the demo project gets

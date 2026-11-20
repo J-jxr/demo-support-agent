@@ -1,10 +1,10 @@
 # Acme Outfitters support agent
 
-Traffic source for the public TraceRoot demo project. A support agent for a
+Traffic source for the public traceroot demo project. A support agent for a
 fake outdoor gear shop answers synthetic customers. The traffic driver plays
 the customers.
 
-This code is the source that TraceRoot shows in the demo project. Root cause
+This code is the source that traceroot shows in the demo project. Root cause
 analysis and "Show code" links in demo traces point to commits in this repo.
 
 ## What it shows
@@ -22,7 +22,7 @@ analysis and "Show code" links in demo traces point to commits in this repo.
 
 `main` is the stable version. Each `fault/*` branch is `main` plus one commit
 that adds a bug. The demo project runs a small share of its traffic on these
-branches, so TraceRoot detectors and alerts have real problems to find, and
+branches, so traceroot detectors and alerts have real problems to find, and
 root cause analysis can point to the commit that caused them.
 
 | Branch | What goes wrong |
@@ -38,7 +38,7 @@ root cause analysis can point to the commit that caused them.
 
 ```bash
 export TRACEROOT_API_KEY=tr-...            # key of the demo project
-export TRACEROOT_HOST_URL=https://app.traceroot.ai   # or your own TraceRoot host
+export TRACEROOT_HOST_URL=https://app.traceroot.ai   # or your own traceroot host
 export TRACEROOT_ENVIRONMENT=production
 export OPENAI_API_KEY=sk-...
 
@@ -73,11 +73,11 @@ Run it against the stable version or a fault version:
 ```bash
 python evals/run_eval.py                                     # stable version
 python evals/run_eval.py --ref fault/f3-refund-limit-config  # one fault
-python evals/run_eval.py --local                             # do not report to TraceRoot
+python evals/run_eval.py --local                             # do not report to traceroot
 ```
 
 Each fault fails the case that reaches its bug, so the run comparison in
-TraceRoot shows which cases a commit broke.
+traceroot shows which cases a commit broke.
 
 ## Set up a new demo project
 
@@ -95,7 +95,7 @@ python setup_project.py
 ## Scheduled traffic and the state bot
 
 `.github/workflows/state-bot.yml` runs `state_bot.py` every 12 hours, once
-for each TraceRoot environment in the repository variable
+for each traceroot environment in the repository variable
 `STATE_BOT_ENVIRONMENTS` (for example `["staging"]`). Each run does two
 things:
 
@@ -120,7 +120,7 @@ TRACEROOT_HOST_URL=https://staging.traceroot.ai python state_bot.py --dry-run
 |---|---|---|---|
 | `OPENAI_API_KEY` | secret | repository | Model calls of the demo agent |
 | `TRACEROOT_API_KEY` | secret | environment | Key of the demo project; sends the traces |
-| `TRACEROOT_HOST_URL` | variable | environment | The TraceRoot host, for example `https://staging.traceroot.ai` |
+| `TRACEROOT_HOST_URL` | variable | environment | The traceroot host, for example `https://staging.traceroot.ai` |
 | `FIXED_FAULTS` | variable | environment (optional) | Faults that the team fixed in this environment, for example `f3`. The bot does not turn them on again. |
 | `STATE_BOT_ENVIRONMENTS` | variable | repository | JSON list of the GitHub environments to run, for example `["staging", "production"]` |
 | `SESSIONS_PER_RUN` | variable | repository (optional) | Sessions in each run; the default is 20 |
@@ -138,7 +138,7 @@ environment, after the bot has run long enough for both signals to exist.
 
 1. **F3, fixed.** On a day when F3 is off, add `f3` to `FIXED_FAULTS` for
    this environment. Then resolve the signal of the "Large refund without
-   supervisor review" detector, with the reason "Fixed outside TraceRoot".
+   supervisor review" detector, with the reason "Fixed outside traceroot".
    F3 does not come back, so the signal stays resolved.
 2. **F6, opened again.** On a day when F6 is off, resolve the signal of the
    "Agent handoff loop" detector. On the next day that F6 is on, the
