@@ -1,5 +1,5 @@
 """
-One-time setup of a TraceRoot project for the demo: detectors, alerts and a dashboard.
+One-time setup of a traceroot project for the demo: detectors, alerts and a dashboard.
 
 The script is safe to run again. Detectors and the dashboard are matched by
 name. Alerts and widgets are created only when one with the same name does

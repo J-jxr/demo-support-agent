@@ -1,5 +1,5 @@
 """
-State bot for the TraceRoot demo project.
+State bot for the traceroot demo project.
 
 A scheduled workflow runs this script every 12 hours. Each run:
 
@@ -95,7 +95,7 @@ def main() -> None:
     unknown = set(SCHEDULE) - set(FAULTS)
     if unknown:
         sys.exit(f"faults in SCHEDULE but not in run_demo.FAULTS: {', '.join(sorted(unknown))}")
-    # No default host: a missing setting must not send demo traffic to the wrong TraceRoot.
+    # No default host: a missing setting must not send demo traffic to the wrong traceroot.
     host = os.environ.get("TRACEROOT_HOST_URL")
     if not host:
         sys.exit("TRACEROOT_HOST_URL is not set")
