@@ -52,16 +52,21 @@ jobs:
             python state_bot.py $DRY_RUN
 
   # GitHub stops the scheduled workflows of a public repository after 60 days
-  # without activity. Enabling this workflow again on each scheduled run keeps
-  # the schedule on.
+  # without activity. Recover the eval workflow only from inactivity.
   keepalive:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     permissions:
       actions: write
     steps:
-      - name: Enable this workflow
+      - name: Keep the demo workflows scheduled
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-        run: gh api -X PUT "repos/$REPO/actions/workflows/state-bot.yml/enable"
+        run: |
+          gh api -X PUT "repos/$REPO/actions/workflows/state-bot.yml/enable"
+          eval_workflow="repos/$REPO/actions/workflows/demo-evals.yml"
+          eval_state=$(gh api "$eval_workflow" --jq .state)
+          if [ "$eval_state" = disabled_inactivity ]; then
+            gh api -X PUT "$eval_workflow/enable"
+          fi

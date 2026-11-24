@@ -1,0 +1,51 @@
+name: Demo evaluations
+
+on:
+  schedule:
+    - cron: "17 10 * * 1"
+      timezone: "America/Los_Angeles"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "TraceRoot environment to refresh"
+        type: choice
+        options:
+          - staging
+          - production
+        default: staging
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: >-
+          ${{ fromJSON(inputs.environment && format('[{0}]', toJSON(inputs.environment))
+          || vars.STATE_BOT_ENVIRONMENTS || '["staging"]') }}
+    environment: ${{ matrix.environment }}
+    concurrency:
+      group: demo-evals-${{ matrix.environment }}
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Run the golden-set evaluation
+        env:
+          TRACEROOT_API_KEY: ${{ secrets.TRACEROOT_API_KEY }}
+          TRACEROOT_HOST_URL: ${{ vars.TRACEROOT_HOST_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          : "${TRACEROOT_HOST_URL:?Set TRACEROOT_HOST_URL for this environment}"
+          : "${TRACEROOT_API_KEY:?Set TRACEROOT_API_KEY for this environment}"
+          : "${OPENAI_API_KEY:?Set OPENAI_API_KEY for this environment}"
+          uv run --no-project --python 3.13 --with-requirements requirements.txt \
+            python evals/run_eval.py
