@@ -36,9 +36,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
           persist-credentials: false
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
-      - name: Run the golden-set evaluation
+      - name: Run the golden-set evaluations
         env:
           TRACEROOT_API_KEY: ${{ secrets.TRACEROOT_API_KEY }}
           TRACEROOT_HOST_URL: ${{ vars.TRACEROOT_HOST_URL }}
@@ -49,3 +50,11 @@ jobs:
           : "${OPENAI_API_KEY:?Set OPENAI_API_KEY for this environment}"
           uv run --no-project --python 3.13 --with-requirements requirements.txt \
             python evals/run_eval.py
+          for candidate_ref in \
+            fault/f1-us-date-format \
+            fault/f3-refund-limit-config \
+            fault/f6-chained-handoffs
+          do
+            uv run --no-project --python 3.13 --with-requirements requirements.txt \
+              python evals/run_eval.py --ref "$candidate_ref"
+          done
