@@ -50,5 +50,11 @@ jobs:
           : "${OPENAI_API_KEY:?Set OPENAI_API_KEY for this environment}"
           uv run --no-project --python 3.13 --with-requirements requirements.txt \
             python evals/run_eval.py
-          uv run --no-project --python 3.13 --with-requirements requirements.txt \
-            python evals/run_eval.py --ref fault/f3-refund-limit-config
+          for candidate_ref in \
+            fault/f1-us-date-format \
+            fault/f3-refund-limit-config \
+            fault/f6-chained-handoffs
+          do
+            uv run --no-project --python 3.13 --with-requirements requirements.txt \
+              python evals/run_eval.py --ref "$candidate_ref"
+          done
