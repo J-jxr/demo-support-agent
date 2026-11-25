@@ -31,22 +31,19 @@ from traceroot import Integration, Scorer, evaluate  # noqa: E402
 
 from run_demo import checkout_fault  # noqa: E402
 
-traceroot.initialize(integrations=[Integration.OPENAI])
-
 JUDGE_MODEL = "gpt-6-sol"
 
 
 def load_agent(ref: str | None):
     """Import support_agent and shop_data from `ref`, or from this checkout."""
     path = ROOT if ref is None else checkout_fault(ref)
+    sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=path, text=True).strip()
+    traceroot.initialize(integrations=[Integration.OPENAI], git_ref=sha)
     sys.path.insert(0, str(path))
     for name in ("shop_data", "support_agent"):
         sys.modules.pop(name, None)
     agent = importlib.import_module("support_agent")
-    sha = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"], cwd=path, capture_output=True, text=True
-    ).stdout.strip()
-    return agent, f"{ref or 'main'}@{sha}"
+    return agent, f"{ref or 'main'}@{sha[:7]}"
 
 
 _calls: contextvars.ContextVar[dict[str, list[str]]] = contextvars.ContextVar("calls")
